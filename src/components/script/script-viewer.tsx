@@ -204,6 +204,7 @@ export function ScriptViewer() {
             return (
               <div
                 key={index}
+                data-line-index={index}
                 ref={(el) => {
                   if (el) lineRefs.current.set(index, el)
                 }}

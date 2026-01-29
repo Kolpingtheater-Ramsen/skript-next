@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback } from 'react'
+import { useEffect, useCallback, useMemo } from 'react'
 import { NavBar, Sidebar, BottomNav } from '@/components/layout'
 import { ScriptViewer } from '@/components/script'
 import { SettingsModal } from '@/components/settings'
@@ -9,11 +9,30 @@ import { useSettingsStore } from '@/stores/settings-store'
 import { useDirectorStore } from '@/stores/director-store'
 import { socketManager } from '@/lib/socket'
 import { cn } from '@/lib/utils'
+import { CATEGORIES } from '@/lib/constants'
 
 export default function HomePage() {
   const { scriptData, loadScript } = useScriptStore()
-  const { playId } = useSettingsStore()
+  const { playId, selectedActor } = useSettingsStore()
   const director = useDirectorStore()
+
+  // Check if actor has any highlighted lines (to determine if bottom nav will show)
+  const hasActorLines = useMemo(() => {
+    if (!selectedActor) return false
+    return scriptData.some((row) => {
+      if (row.Charakter?.toUpperCase() === selectedActor) return true
+      if (
+        row.Kategorie === CATEGORIES.INSTRUCTION &&
+        row['Text/Anweisung']?.toUpperCase().includes(selectedActor)
+      ) {
+        return true
+      }
+      return false
+    })
+  }, [scriptData, selectedActor])
+
+  // Bottom nav is visible when director mode is active OR when an actor is selected with lines
+  const bottomNavVisible = director.isDirector || hasActorLines
 
   // Initialize socket and load script
   useEffect(() => {
@@ -122,7 +141,7 @@ export default function HomePage() {
     <div
       className={cn(
         'min-h-screen',
-        director.isDirector && 'pb-[72px]' // Space for bottom nav
+        bottomNavVisible && 'pb-[72px]' // Space for bottom nav
       )}
     >
       <NavBar />
@@ -135,7 +154,7 @@ export default function HomePage() {
 
       <BottomNav onPrevious={handlePreviousLine} onNext={handleNextLine} />
 
-      {/* FAB to jump to marked line */}
+      {/* FAB to jump to marked line - only shown when there's a marked line and user is not director */}
       {director.markedLineIndex !== null && !director.isDirector && (
         <button
           onClick={() => {
@@ -154,11 +173,17 @@ export default function HomePage() {
             'text-xl',
             'hover:bg-[var(--color-primary-hover)] hover:scale-105',
             'transition-all z-[300]',
-            director.isDirector ? 'bottom-[88px]' : 'bottom-20'
+            // Position above bottom nav if it's visible
+            bottomNavVisible ? 'bottom-[88px]' : 'bottom-6'
           )}
           aria-label="Zur markierten Zeile springen"
         >
-          📍
+          <span role="img" aria-hidden="true">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+              <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+              <circle cx="12" cy="10" r="3"></circle>
+            </svg>
+          </span>
         </button>
       )}
     </div>
