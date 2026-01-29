@@ -8,7 +8,7 @@ import { useScriptStore } from '@/stores/script-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useDirectorStore } from '@/stores/director-store'
 import { socketManager } from '@/lib/socket'
-import { cn } from '@/lib/utils'
+import { cn, scrollToLineWithFlash } from '@/lib/utils'
 import { CATEGORIES } from '@/lib/constants'
 
 export default function HomePage() {
@@ -139,12 +139,9 @@ export default function HomePage() {
 
     setActorLinePosition(newPosition)
 
-    // Scroll to the line
+    // Scroll to the line with flash effect
     const lineIndex = highlightedLineIndices[newPosition]
-    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    scrollToLineWithFlash(lineIndex)
   }, [highlightedLineIndices, actorLinePosition])
 
   const handleActorNext = useCallback(() => {
@@ -156,12 +153,9 @@ export default function HomePage() {
 
     setActorLinePosition(newPosition)
 
-    // Scroll to the line
+    // Scroll to the line with flash effect
     const lineIndex = highlightedLineIndices[newPosition]
-    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    scrollToLineWithFlash(lineIndex)
   }, [highlightedLineIndices, actorLinePosition])
 
   // Keyboard navigation for both director and actor modes
@@ -239,11 +233,8 @@ export default function HomePage() {
       {director.markedLineIndex !== null && !director.isDirector && (
         <button
           onClick={() => {
-            const el = document.querySelector(
-              `[data-line-index="${director.markedLineIndex}"]`
-            )
-            if (el) {
-              el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+            if (director.markedLineIndex !== null) {
+              scrollToLineWithFlash(director.markedLineIndex)
             }
           }}
           className={cn(

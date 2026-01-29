@@ -111,3 +111,28 @@ export function formatTimeDE(date: Date): string {
 export function formatDateTimeDE(date: Date): string {
   return `${formatDateDE(date)} ${formatTimeDE(date)}`
 }
+
+/**
+ * Scroll to a script line by index with a flash highlight effect
+ * Uses requestAnimationFrame to ensure DOM is ready before scrolling
+ */
+export function scrollToLineWithFlash(index: number): void {
+  if (!isBrowser) return
+
+  // Use requestAnimationFrame to ensure DOM is ready
+  requestAnimationFrame(() => {
+    const element = document.querySelector(`[data-line-index="${index}"]`)
+    if (element) {
+      // Scroll to the element
+      element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+
+      // Add flash highlight effect
+      element.classList.add('flash-highlight')
+
+      // Remove the class after animation completes
+      setTimeout(() => {
+        element.classList.remove('flash-highlight')
+      }, 1000) // Match the animation duration in globals.css
+    }
+  })
+}

@@ -5,7 +5,7 @@ import { useDirectorStore } from '@/stores/director-store'
 import { useScriptStore } from '@/stores/script-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { Button } from '@/components/ui/button'
-import { cn } from '@/lib/utils'
+import { cn, scrollToLineWithFlash } from '@/lib/utils'
 import { CATEGORIES } from '@/lib/constants'
 import type { ScriptRow } from '@/types'
 
@@ -84,12 +84,9 @@ export function BottomNav({
 
     setCurrentActorLinePosition(newPosition)
 
-    // Scroll to the line
+    // Scroll to the line with flash effect
     const lineIndex = highlightedLineIndices[newPosition]
-    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    scrollToLineWithFlash(lineIndex)
   }, [highlightedLineIndices, currentActorLinePosition, setCurrentActorLinePosition])
 
   // Handle navigation to next actor line
@@ -102,12 +99,9 @@ export function BottomNav({
 
     setCurrentActorLinePosition(newPosition)
 
-    // Scroll to the line
+    // Scroll to the line with flash effect
     const lineIndex = highlightedLineIndices[newPosition]
-    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
-    if (el) {
-      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-    }
+    scrollToLineWithFlash(lineIndex)
   }, [highlightedLineIndices, currentActorLinePosition, setCurrentActorLinePosition])
 
   // Director mode bottom nav

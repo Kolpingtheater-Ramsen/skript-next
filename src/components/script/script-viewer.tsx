@@ -7,6 +7,7 @@ import { useDirectorStore } from '@/stores/director-store'
 import { useUIStore } from '@/stores/ui-store'
 import { useNotesStore } from '@/stores/notes-store'
 import { CATEGORIES } from '@/lib/constants'
+import { scrollToLineWithFlash } from '@/lib/utils'
 import { socketManager } from '@/lib/socket'
 import { ScriptLine } from './script-line'
 import { SceneHeader } from './scene-header'
@@ -96,13 +97,10 @@ export function ScriptViewer() {
     [isDirector, setMarkedLineIndex]
   )
 
-  // Scroll to marked line
+  // Scroll to marked line with flash effect
   useEffect(() => {
     if (markedLineIndex !== null && settings.autoScroll) {
-      const lineEl = lineRefs.current.get(markedLineIndex)
-      if (lineEl) {
-        lineEl.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
+      scrollToLineWithFlash(markedLineIndex)
     }
   }, [markedLineIndex, settings.autoScroll])
 
