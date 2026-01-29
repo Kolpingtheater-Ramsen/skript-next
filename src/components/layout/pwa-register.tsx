@@ -7,7 +7,7 @@ export function PWARegister() {
     if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       navigator.serviceWorker
         .register('/sw.js')
-        .then((reg) => console.log('SW registered'))
+        .then(() => console.log('SW registered'))
         .catch((err) => console.log('SW registration failed:', err))
     }
   }, [])

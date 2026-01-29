@@ -110,7 +110,7 @@ export default function ActorPage() {
 
       {/* Script content */}
       <main ref={containerRef} className="max-w-2xl mx-auto p-4">
-        {visibleLines.map((row, idx) => {
+        {visibleLines.map((row) => {
           const originalIndex = scriptData.indexOf(row)
           const isMarked = originalIndex === markedLineIndex
           const isActorHighlighted = isHighlighted(row)

@@ -6,7 +6,7 @@ import { CATEGORIES } from '@/lib/constants'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useNotesStore } from '@/stores/notes-store'
 import { useScriptStore } from '@/stores/script-store'
-import type { ScriptRow, Actor } from '@/types'
+import type { ScriptRow } from '@/types'
 import { Tag } from './tag'
 import { NoteEditor } from './note-editor'
 

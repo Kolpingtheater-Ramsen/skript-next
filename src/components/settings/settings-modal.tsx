@@ -89,21 +89,18 @@ export function SettingsModal() {
       <SettingsSection title="🎨 Darstellung">
         <div className="flex gap-3 mb-4">
           <ThemeOption
-            id="light"
             label="Hell"
             selected={settings.theme === 'light'}
             onClick={() => settings.setTheme('light')}
             previewClass="bg-white border border-gray-200"
           />
           <ThemeOption
-            id="dark"
             label="Dunkel"
             selected={settings.theme === 'dark'}
             onClick={() => settings.setTheme('dark')}
             previewClass="bg-gray-900"
           />
           <ThemeOption
-            id="pink"
             label="Pink"
             selected={settings.theme === 'pink'}
             onClick={() => settings.setTheme('pink')}
@@ -307,13 +304,11 @@ function SettingsSection({
 }
 
 function ThemeOption({
-  id,
   label,
   selected,
   onClick,
   previewClass,
 }: {
-  id: string
   label: string
   selected: boolean
   onClick: () => void

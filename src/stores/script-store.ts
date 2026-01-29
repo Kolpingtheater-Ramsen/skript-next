@@ -19,7 +19,7 @@ interface ScriptState {
   loadScript: (playId: string) => Promise<void>
 }
 
-export const useScriptStore = create<ScriptState>((set, get) => ({
+export const useScriptStore = create<ScriptState>((set) => ({
   playId: 'default',
   scriptData: [],
   actors: [],
