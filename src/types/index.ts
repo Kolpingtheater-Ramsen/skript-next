@@ -156,3 +156,19 @@ export interface PlayConfig {
   name: string
   csvUrl: string
 }
+
+// Stats types
+export interface ActorStats {
+  name: string
+  occurrences: number
+  words: number
+  percent: string
+}
+
+export interface ScriptStats {
+  actors: ActorStats[]
+  totalActors: number
+  totalWords: number
+  totalScenes: number
+  avgWords: number
+}
