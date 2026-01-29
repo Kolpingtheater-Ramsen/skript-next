@@ -21,6 +21,7 @@ export function ScriptViewer() {
 
   const { scriptData, playId } = useScriptStore()
   // Use individual selectors to ensure reactivity
+  const hasHydrated = useSettingsStore((state) => state._hasHydrated)
   const showActorText = useSettingsStore((state) => state.showActorText)
   const showDirections = useSettingsStore((state) => state.showDirections)
   const showTechnical = useSettingsStore((state) => state.showTechnical)
@@ -208,6 +209,17 @@ export function ScriptViewer() {
   // Get scene data for overview
   const getSceneData = (sceneData: Array<{ row: ScriptRow; index: number }>) =>
     sceneData.map((d) => d.row)
+
+  // Show loading state until settings have been hydrated from localStorage
+  if (!hasHydrated) {
+    return (
+      <div className="max-w-[960px] mx-auto p-6 md:p-4 bg-[var(--color-surface)] rounded-xl md:rounded-none shadow-md dark:shadow-lg transition-colors">
+        <div className="text-center py-12 text-[var(--color-text-muted)]">
+          <p>Lade Einstellungen...</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div

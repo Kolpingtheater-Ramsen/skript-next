@@ -6,6 +6,9 @@ import type { Theme, FilterSettings, Settings } from '@/types'
 import { DEFAULT_SETTINGS, STORAGE_KEYS } from '@/lib/constants'
 
 interface SettingsState extends Settings {
+  // Hydration state
+  _hasHydrated: boolean
+  setHasHydrated: (state: boolean) => void
   // Theme
   setTheme: (theme: Theme) => void
   // Selection
@@ -30,6 +33,8 @@ export const useSettingsStore = create<SettingsState>()(
   persist(
     (set) => ({
       ...DEFAULT_SETTINGS,
+      _hasHydrated: false,
+      setHasHydrated: (state) => set({ _hasHydrated: state }),
 
       setTheme: (theme) => set({ theme }),
 
@@ -64,6 +69,9 @@ export const useSettingsStore = create<SettingsState>()(
     {
       name: STORAGE_KEYS.SETTINGS,
       storage: createJSONStorage(() => localStorage),
+      onRehydrateStorage: () => (state) => {
+        state?.setHasHydrated(true)
+      },
       partialize: (state) => ({
         theme: state.theme,
         playId: state.playId,
