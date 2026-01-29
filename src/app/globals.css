@@ -1,0 +1,334 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ============================================
+   DESIGN TOKENS - CSS Custom Properties
+   Preserved from original Skript design
+   ============================================ */
+
+:root {
+  /* Colors - Light Theme */
+  --color-primary: #ff6a00;
+  --color-primary-hover: #e65f00;
+  --color-primary-light: #fff0e6;
+  --color-primary-dark: #cc5500;
+
+  --color-success: #10b981;
+  --color-success-light: #d1fae5;
+  --color-warning: #f59e0b;
+  --color-warning-light: #fef3c7;
+  --color-error: #ef4444;
+  --color-error-light: #fee2e2;
+  --color-info: #06b6d4;
+  --color-info-light: #cffafe;
+
+  /* Semantic Colors */
+  --color-background: #f9fafb;
+  --color-surface: #ffffff;
+  --color-text: #111827;
+  --color-text-secondary: #6b7280;
+  --color-text-muted: #9ca3af;
+  --color-border: #e5e7eb;
+  --color-border-hover: #d1d5db;
+
+  /* Category Colors */
+  --color-instruction: #8b5cf6;
+  --color-instruction-bg: #f5f3ff;
+  --color-technical: #10b981;
+  --color-technical-bg: #d1fae5;
+  --color-lighting: #f59e0b;
+  --color-lighting-bg: #fef3c7;
+  --color-audio: #ec4899;
+  --color-audio-bg: #fce7f3;
+  --color-props: #06b6d4;
+  --color-props-bg: #cffafe;
+  --color-microphone: #0ea5e9;
+  --color-microphone-bg: #e0f2fe;
+}
+
+/* Dark mode variables */
+.dark {
+  --color-background: #0f0f10;
+  --color-surface: #18181a;
+  --color-text: #f3f3f3;
+  --color-text-secondary: #a1a1aa;
+  --color-text-muted: #71717a;
+  --color-border: #2e2e33;
+  --color-border-hover: #3f3f46;
+
+  /* Adjusted category colors for dark mode */
+  --color-instruction-bg: rgba(139, 92, 246, 0.08);
+  --color-technical-bg: rgba(16, 185, 129, 0.08);
+  --color-lighting-bg: rgba(245, 158, 11, 0.08);
+  --color-audio-bg: rgba(236, 72, 153, 0.08);
+  --color-props-bg: rgba(6, 182, 212, 0.08);
+  --color-microphone-bg: rgba(14, 165, 233, 0.08);
+
+  --color-primary-light: rgba(249, 115, 22, 0.15);
+  --color-success-light: rgba(16, 185, 129, 0.2);
+  --color-error-light: rgba(239, 68, 68, 0.2);
+}
+
+/* Pink mode variables */
+.pink {
+  --color-primary: #ec4899;
+  --color-primary-hover: #db2777;
+  --color-primary-light: #fce7f3;
+  --color-primary-dark: #9d174d;
+
+  --color-background: #fdf2f8;
+  --color-surface: #fff5f7;
+  --color-text: #831843;
+  --color-text-secondary: #9d174d;
+  --color-text-muted: #be185d;
+  --color-border: #fbcfe8;
+  --color-border-hover: #f9a8d4;
+
+  /* All categories use pink in pink mode */
+  --color-instruction-bg: #fce7f3;
+  --color-technical-bg: #fce7f3;
+  --color-lighting-bg: #fce7f3;
+  --color-audio-bg: #fce7f3;
+  --color-props-bg: #fce7f3;
+  --color-microphone-bg: #fce7f3;
+
+  --color-instruction: #9d174d;
+  --color-technical: #9d174d;
+  --color-lighting: #9d174d;
+  --color-audio: #9d174d;
+  --color-props: #9d174d;
+  --color-microphone: #9d174d;
+
+  --color-success: #db2777;
+  --color-success-light: #fce7f3;
+  --color-error: #be185d;
+  --color-error-light: #fce7f3;
+}
+
+/* ============================================
+   BASE STYLES
+   ============================================ */
+
+* {
+  @apply box-border;
+}
+
+html {
+  @apply scroll-smooth;
+  -webkit-text-size-adjust: 100%;
+}
+
+body {
+  @apply antialiased min-h-screen;
+  font-family: var(--font-inter), 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--color-background);
+  color: var(--color-text);
+  padding-top: 64px;
+  transition: background-color 200ms ease, color 200ms ease;
+}
+
+/* Dark mode headings use Cinzel */
+.dark h1,
+.dark h2,
+.dark h3,
+.dark h4,
+.dark h5,
+.dark h6 {
+  font-family: var(--font-cinzel), 'Cinzel', serif;
+}
+
+/* Focus styles for accessibility */
+:focus-visible {
+  @apply outline-2 outline-offset-2;
+  outline-color: var(--color-primary);
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+  body {
+    padding-top: 56px;
+  }
+}
+
+/* ============================================
+   CUSTOM COMPONENTS
+   ============================================ */
+
+/* Nav bar dark semi-transparent background */
+.nav-backdrop {
+  background-color: rgba(15, 15, 16, 0.85);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* Pink mode nav */
+.pink .nav-backdrop {
+  background-color: var(--color-surface);
+}
+
+/* Director mode border animation */
+.is-director::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 4px solid var(--color-error);
+  pointer-events: none;
+  z-index: 700;
+  animation: pulse-border 2s infinite;
+}
+
+.pink.is-director::before {
+  border-color: var(--color-primary);
+  animation: pulse-border-pink 2s infinite;
+}
+
+/* Reconnecting state */
+.reconnecting::before {
+  content: '';
+  position: fixed;
+  inset: 0;
+  border: 4px solid #f59e0b;
+  pointer-events: none;
+  z-index: 700;
+  animation: pulse-border-warning 1.5s infinite;
+}
+
+@keyframes pulse-border {
+  0%, 100% {
+    border-color: #ef4444;
+  }
+  50% {
+    border-color: rgba(239, 68, 68, 0.5);
+  }
+}
+
+@keyframes pulse-border-pink {
+  0%, 100% {
+    border-color: #ec4899;
+  }
+  50% {
+    border-color: rgba(236, 72, 153, 0.5);
+  }
+}
+
+@keyframes pulse-border-warning {
+  0%, 100% {
+    border-color: #f59e0b;
+  }
+  50% {
+    border-color: rgba(245, 158, 11, 0.3);
+  }
+}
+
+/* Flash highlight animation */
+@keyframes flash-highlight {
+  0% {
+    background-color: rgba(59, 130, 246, 0.4);
+  }
+  100% {
+    background-color: transparent;
+  }
+}
+
+.flash-highlight {
+  animation: flash-highlight 1s ease-out forwards;
+}
+
+/* Hide scrollbar utility */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* ============================================
+   PRINT STYLES
+   ============================================ */
+
+@media print {
+  .no-print,
+  nav,
+  .sidebar,
+  .bottom-nav,
+  .fab,
+  .toast,
+  .modal {
+    display: none !important;
+  }
+
+  body {
+    background: white;
+    padding: 0;
+    margin: 0;
+  }
+
+  .script-line {
+    break-inside: avoid;
+  }
+}
+
+/* ============================================
+   UTILITY LAYERS
+   ============================================ */
+
+@layer utilities {
+  /* Text colors using CSS variables */
+  .text-primary {
+    color: var(--color-primary);
+  }
+
+  .text-secondary {
+    color: var(--color-text-secondary);
+  }
+
+  .text-muted {
+    color: var(--color-text-muted);
+  }
+
+  /* Background colors using CSS variables */
+  .bg-surface {
+    background-color: var(--color-surface);
+  }
+
+  .bg-background {
+    background-color: var(--color-background);
+  }
+
+  /* Border colors */
+  .border-default {
+    border-color: var(--color-border);
+  }
+
+  .border-hover {
+    border-color: var(--color-border-hover);
+  }
+
+  /* Category backgrounds */
+  .bg-instruction-bg {
+    background-color: var(--color-instruction-bg);
+  }
+
+  .bg-technical-bg {
+    background-color: var(--color-technical-bg);
+  }
+
+  .bg-lighting-bg {
+    background-color: var(--color-lighting-bg);
+  }
+
+  .bg-audio-bg {
+    background-color: var(--color-audio-bg);
+  }
+
+  .bg-props-bg {
+    background-color: var(--color-props-bg);
+  }
+
+  .bg-microphone-bg {
+    background-color: var(--color-microphone-bg);
+  }
+}
