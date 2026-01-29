@@ -12,6 +12,10 @@ import type { ScriptRow } from '@/types'
 interface BottomNavProps {
   onPrevious: () => void
   onNext: () => void
+  onActorPrevious?: () => void
+  onActorNext?: () => void
+  actorLinePosition?: number
+  setActorLinePosition?: (position: number) => void
 }
 
 // Check if a line is highlighted for the selected actor
@@ -32,14 +36,23 @@ function isLineHighlightedForActor(row: ScriptRow, selectedActor: string): boole
   return false
 }
 
-export function BottomNav({ onPrevious, onNext }: BottomNavProps) {
+export function BottomNav({
+  onPrevious,
+  onNext,
+  onActorPrevious,
+  onActorNext,
+  actorLinePosition,
+  setActorLinePosition,
+}: BottomNavProps) {
   const isDirector = useDirectorStore((state) => state.isDirector)
   const markedLineIndex = useDirectorStore((state) => state.markedLineIndex)
   const scriptData = useScriptStore((state) => state.scriptData)
   const selectedActor = useSettingsStore((state) => state.selectedActor)
 
-  // Track current actor line index for navigation
-  const [currentActorLinePosition, setCurrentActorLinePosition] = useState(0)
+  // Track current actor line index for navigation (internal state as fallback)
+  const [internalPosition, setInternalPosition] = useState(0)
+  const currentActorLinePosition = actorLinePosition ?? internalPosition
+  const setCurrentActorLinePosition = setActorLinePosition ?? setInternalPosition
 
   // Get list of highlighted line indices for the selected actor
   const highlightedLineIndices = useMemo(() => {
@@ -54,10 +67,12 @@ export function BottomNav({ onPrevious, onNext }: BottomNavProps) {
     return indices
   }, [scriptData, selectedActor])
 
-  // Reset position when actor changes
+  // Reset position when actor changes (only for internal state)
   useEffect(() => {
-    setCurrentActorLinePosition(0)
-  }, [selectedActor])
+    if (!setActorLinePosition) {
+      setInternalPosition(0)
+    }
+  }, [selectedActor, setActorLinePosition])
 
   // Handle navigation to previous actor line
   const handleActorPrevious = useCallback(() => {
@@ -75,7 +90,7 @@ export function BottomNav({ onPrevious, onNext }: BottomNavProps) {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
-  }, [highlightedLineIndices, currentActorLinePosition])
+  }, [highlightedLineIndices, currentActorLinePosition, setCurrentActorLinePosition])
 
   // Handle navigation to next actor line
   const handleActorNext = useCallback(() => {
@@ -93,7 +108,7 @@ export function BottomNav({ onPrevious, onNext }: BottomNavProps) {
     if (el) {
       el.scrollIntoView({ behavior: 'smooth', block: 'center' })
     }
-  }, [highlightedLineIndices, currentActorLinePosition])
+  }, [highlightedLineIndices, currentActorLinePosition, setCurrentActorLinePosition])
 
   // Director mode bottom nav
   if (isDirector) {
@@ -142,13 +157,13 @@ export function BottomNav({ onPrevious, onNext }: BottomNavProps) {
           'dark:backdrop-blur-lg'
         )}
       >
-        <Button variant="secondary" onClick={handleActorPrevious} aria-label="Vorheriger Text">
+        <Button variant="secondary" onClick={onActorPrevious ?? handleActorPrevious} aria-label="Vorheriger Text">
           ← Zurück
         </Button>
         <span className="text-sm text-[var(--color-text-secondary)] font-medium">
           Text {currentLineDisplay} von {totalActorLines}
         </span>
-        <Button variant="secondary" onClick={handleActorNext} aria-label="Nächster Text">
+        <Button variant="secondary" onClick={onActorNext ?? handleActorNext} aria-label="Nächster Text">
           Weiter →
         </Button>
       </div>

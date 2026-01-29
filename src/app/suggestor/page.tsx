@@ -226,7 +226,7 @@ export default function SuggestorPage() {
       <div className="min-h-screen bg-[var(--color-background)] flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[var(--color-primary)] mx-auto mb-4" />
-          <p className="text-[var(--color-text-secondary)]">Lade Besetzungsvorschlage...</p>
+          <p className="text-[var(--color-text-secondary)]">Lade Besetzungsvorschläge...</p>
         </div>
       </div>
     )
@@ -254,9 +254,9 @@ export default function SuggestorPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Zuruck
+            Zurück
           </Link>
-          <h1 className="text-lg font-semibold">Besetzungsvorschlage</h1>
+          <h1 className="text-lg font-semibold">Besetzungsvorschläge</h1>
           <div className="w-16" /> {/* Spacer for centering */}
         </div>
       </header>
@@ -266,7 +266,7 @@ export default function SuggestorPage() {
           <>
             {/* Summary Cards */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Ubersicht</h2>
+              <h2 className="text-xl font-semibold mb-4">Übersicht</h2>
               <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard
                   icon="🎭"
@@ -305,7 +305,7 @@ export default function SuggestorPage() {
                     'hover:bg-[var(--color-primary-hover)]'
                   )}
                 >
-                  {allSelected ? 'Alle Abwahlen' : 'Alle Auswahlen'}
+                  {allSelected ? 'Alle abwählen' : 'Alle auswählen'}
                 </button>
               </div>
               <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
@@ -322,7 +322,7 @@ export default function SuggestorPage() {
 
             {/* Scene Availability */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Szenen-Verfugbarkeit</h2>
+              <h2 className="text-xl font-semibold mb-4">Szenen-Verfügbarkeit</h2>
               {sortedSceneData.length > 0 ? (
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {sortedSceneData.map(({ scene, actors }) => (
@@ -337,7 +337,7 @@ export default function SuggestorPage() {
               ) : (
                 <div className="text-center py-12 text-[var(--color-text-muted)]">
                   <div className="text-4xl mb-2">🎬</div>
-                  <div>Keine Szenen verfugbar</div>
+                  <div>Keine Szenen verfügbar</div>
                 </div>
               )}
             </section>

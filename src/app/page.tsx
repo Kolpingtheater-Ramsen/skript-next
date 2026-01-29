@@ -1,6 +1,6 @@
 'use client'
 
-import { useEffect, useCallback, useMemo } from 'react'
+import { useEffect, useCallback, useMemo, useState } from 'react'
 import { NavBar, Sidebar, BottomNav } from '@/components/layout'
 import { ScriptViewer } from '@/components/script'
 import { SettingsModal } from '@/components/settings'
@@ -16,20 +16,38 @@ export default function HomePage() {
   const { playId, selectedActor } = useSettingsStore()
   const director = useDirectorStore()
 
-  // Check if actor has any highlighted lines (to determine if bottom nav will show)
-  const hasActorLines = useMemo(() => {
-    if (!selectedActor) return false
-    return scriptData.some((row) => {
-      if (row.Charakter?.toUpperCase() === selectedActor) return true
+  // Track current actor line position for navigation
+  const [actorLinePosition, setActorLinePosition] = useState(0)
+
+  // Get list of highlighted line indices for the selected actor
+  const highlightedLineIndices = useMemo(() => {
+    if (!selectedActor) return []
+
+    const indices: number[] = []
+    scriptData.forEach((row, index) => {
+      // Check if character matches
+      if (row.Charakter?.toUpperCase() === selectedActor) {
+        indices.push(index)
+        return
+      }
+      // Check if instruction mentions the actor
       if (
         row.Kategorie === CATEGORIES.INSTRUCTION &&
         row['Text/Anweisung']?.toUpperCase().includes(selectedActor)
       ) {
-        return true
+        indices.push(index)
       }
-      return false
     })
+    return indices
   }, [scriptData, selectedActor])
+
+  // Check if actor has any highlighted lines (to determine if bottom nav will show)
+  const hasActorLines = highlightedLineIndices.length > 0
+
+  // Reset actor line position when actor changes
+  useEffect(() => {
+    setActorLinePosition(0)
+  }, [selectedActor])
 
   // Bottom nav is visible when director mode is active OR when an actor is selected with lines
   const bottomNavVisible = director.isDirector || hasActorLines
@@ -111,11 +129,44 @@ export default function HomePage() {
     }
   }, [director, scriptData.length])
 
-  // Keyboard navigation
+  // Navigation handlers for actor mode
+  const handleActorPrevious = useCallback(() => {
+    if (highlightedLineIndices.length === 0) return
+
+    const newPosition = actorLinePosition > 0
+      ? actorLinePosition - 1
+      : highlightedLineIndices.length - 1 // Wrap to end
+
+    setActorLinePosition(newPosition)
+
+    // Scroll to the line
+    const lineIndex = highlightedLineIndices[newPosition]
+    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlightedLineIndices, actorLinePosition])
+
+  const handleActorNext = useCallback(() => {
+    if (highlightedLineIndices.length === 0) return
+
+    const newPosition = actorLinePosition < highlightedLineIndices.length - 1
+      ? actorLinePosition + 1
+      : 0 // Wrap to beginning
+
+    setActorLinePosition(newPosition)
+
+    // Scroll to the line
+    const lineIndex = highlightedLineIndices[newPosition]
+    const el = document.querySelector(`[data-line-index="${lineIndex}"]`)
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+  }, [highlightedLineIndices, actorLinePosition])
+
+  // Keyboard navigation for both director and actor modes
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (!director.isDirector) return
-
       // Ignore if typing in an input
       if (
         e.target instanceof HTMLInputElement ||
@@ -124,18 +175,41 @@ export default function HomePage() {
         return
       }
 
-      if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
-        e.preventDefault()
-        handlePreviousLine()
-      } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
-        e.preventDefault()
-        handleNextLine()
+      // Director mode navigation
+      if (director.isDirector) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault()
+          handlePreviousLine()
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault()
+          handleNextLine()
+        }
+        return
+      }
+
+      // Actor mode navigation (when an actor is selected and has lines)
+      if (selectedActor && highlightedLineIndices.length > 0) {
+        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+          e.preventDefault()
+          handleActorPrevious()
+        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+          e.preventDefault()
+          handleActorNext()
+        }
       }
     }
 
     window.addEventListener('keydown', handleKeyDown)
     return () => window.removeEventListener('keydown', handleKeyDown)
-  }, [director.isDirector, handlePreviousLine, handleNextLine])
+  }, [
+    director.isDirector,
+    selectedActor,
+    highlightedLineIndices.length,
+    handlePreviousLine,
+    handleNextLine,
+    handleActorPrevious,
+    handleActorNext,
+  ])
 
   return (
     <div
@@ -152,7 +226,14 @@ export default function HomePage() {
         <ScriptViewer />
       </main>
 
-      <BottomNav onPrevious={handlePreviousLine} onNext={handleNextLine} />
+      <BottomNav
+        onPrevious={handlePreviousLine}
+        onNext={handleNextLine}
+        onActorPrevious={handleActorPrevious}
+        onActorNext={handleActorNext}
+        actorLinePosition={actorLinePosition}
+        setActorLinePosition={setActorLinePosition}
+      />
 
       {/* FAB to jump to marked line - only shown when there's a marked line and user is not director */}
       {director.markedLineIndex !== null && !director.isDirector && (

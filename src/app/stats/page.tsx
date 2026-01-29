@@ -107,7 +107,7 @@ export default function StatsPage() {
             value: {
               show: true,
               color: isDark ? '#f3f3f3' : '#111827',
-              formatter: (val: string) => `${val} Worter`,
+              formatter: (val: string) => `${val} Wörter`,
             },
             total: {
               show: true,
@@ -230,7 +230,7 @@ export default function StatsPage() {
   ]
   const wordsSeries = [
     {
-      name: 'Worter',
+      name: 'Wörter',
       data: stats.actors.slice(0, 10).map((a) => a.words),
     },
   ]
@@ -268,7 +268,7 @@ export default function StatsPage() {
                 d="M15 19l-7-7 7-7"
               />
             </svg>
-            Zuruck
+            Zurück
           </Link>
           <h1 className="text-lg font-semibold">Statistiken</h1>
           <div className="w-16" /> {/* Spacer for centering */}
@@ -278,12 +278,12 @@ export default function StatsPage() {
       <main className="max-w-4xl mx-auto p-4">
         {/* Summary Cards */}
         <section className="mb-8">
-          <h2 className="text-xl font-semibold mb-4">Ubersicht</h2>
+          <h2 className="text-xl font-semibold mb-4">Übersicht</h2>
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             <StatCard icon="🎭" label="Rollen" value={stats.totalActors} />
-            <StatCard icon="💬" label="Gesprochene Worter" value={stats.totalWords.toLocaleString('de-DE')} />
+            <StatCard icon="💬" label="Gesprochene Wörter" value={stats.totalWords.toLocaleString('de-DE')} />
             <StatCard icon="🎬" label="Szenen" value={stats.totalScenes} />
-            <StatCard icon="📊" label="O Worter pro Rolle" value={stats.avgWords.toLocaleString('de-DE')} />
+            <StatCard icon="📊" label="Ø Wörter pro Rolle" value={stats.avgWords.toLocaleString('de-DE')} />
           </div>
         </section>
 
@@ -298,7 +298,7 @@ export default function StatsPage() {
                     <th className="text-left p-3 font-medium text-[var(--color-text-secondary)]">#</th>
                     <th className="text-left p-3 font-medium text-[var(--color-text-secondary)]">Rolle</th>
                     <th className="text-right p-3 font-medium text-[var(--color-text-secondary)]">Auftritte</th>
-                    <th className="text-right p-3 font-medium text-[var(--color-text-secondary)]">Worter</th>
+                    <th className="text-right p-3 font-medium text-[var(--color-text-secondary)]">Wörter</th>
                     <th className="text-right p-3 font-medium text-[var(--color-text-secondary)]">Anteil</th>
                   </tr>
                 </thead>
@@ -357,7 +357,7 @@ export default function StatsPage() {
 
             {/* Words Bar Chart */}
             <section className="mb-8">
-              <h2 className="text-xl font-semibold mb-4">Worter (Top 10)</h2>
+              <h2 className="text-xl font-semibold mb-4">Wörter (Top 10)</h2>
               <div className="bg-[var(--color-surface)] border border-[var(--color-border)] rounded-lg p-4">
                 <Chart
                   options={wordsOptions}
@@ -373,7 +373,7 @@ export default function StatsPage() {
         {stats.actors.length === 0 && !isLoading && (
           <div className="text-center py-12 text-[var(--color-text-muted)]">
             <div className="text-4xl mb-2">📊</div>
-            <div>Keine Daten verfugbar</div>
+            <div>Keine Daten verfügbar</div>
           </div>
         )}
       </main>
