@@ -1,7 +1,7 @@
 import type { Metadata, Viewport } from 'next'
 import { Inter, Cinzel } from 'next/font/google'
 import './globals.css'
-import { ThemeProvider } from '@/components/layout/theme-provider'
+import { ThemeProvider, PWARegister } from '@/components/layout'
 
 const inter = Inter({
   subsets: ['latin'],
@@ -62,7 +62,10 @@ export default function RootLayout({
   return (
     <html lang="de" suppressHydrationWarning>
       <body className={`${inter.variable} ${cinzel.variable}`}>
-        <ThemeProvider>{children}</ThemeProvider>
+        <ThemeProvider>
+          <PWARegister />
+          {children}
+        </ThemeProvider>
       </body>
     </html>
   )
