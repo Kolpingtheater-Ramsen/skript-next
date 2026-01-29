@@ -49,11 +49,9 @@ export function ScriptViewer() {
   const lineStates = useMemo(() => {
     const states = new Map<number, LineState>()
 
+    // First pass: determine visibility for each line
     scriptData.forEach((row, index) => {
-      const state: LineState = { visible: false, isContext: false }
-
-      // Check if line should be visible based on filters
-      if (
+      const isVisible = Boolean(
         (showDirections && row.Kategorie === CATEGORIES.INSTRUCTION) ||
         (showTechnical && row.Kategorie === CATEGORIES.TECHNICAL) ||
         (showLighting && row.Kategorie === CATEGORIES.LIGHTING) ||
@@ -63,39 +61,42 @@ export function ScriptViewer() {
         (showActorText &&
           row.Charakter &&
           ACTOR_CATEGORIES.includes(row.Kategorie))
+      )
+
+      states.set(index, { visible: isVisible, isContext: false })
+    })
+
+    // Second pass: mark context lines around visible lines
+    scriptData.forEach((row, index) => {
+      const state = states.get(index)
+      if (!state?.visible) return
+
+      // Determine context range based on category
+      let contextRange = 0
+      if (row.Kategorie === CATEGORIES.INSTRUCTION)
+        contextRange = directionsContext
+      else if (row.Kategorie === CATEGORIES.TECHNICAL)
+        contextRange = technicalContext
+      else if (row.Kategorie === CATEGORIES.LIGHTING)
+        contextRange = lightingContext
+      else if (row.Kategorie === CATEGORIES.AUDIO)
+        contextRange = einspielContext
+      else if (row.Kategorie === CATEGORIES.PROPS)
+        contextRange = requisitenContext
+      else if (row.Kategorie === CATEGORIES.MICROPHONE)
+        contextRange = mikrofonContext
+
+      // Mark context lines
+      for (
+        let i = Math.max(0, index - contextRange);
+        i <= Math.min(scriptData.length - 1, index + contextRange);
+        i++
       ) {
-        state.visible = true
-
-        // Determine context range based on category
-        let contextRange = 0
-        if (row.Kategorie === CATEGORIES.INSTRUCTION)
-          contextRange = directionsContext
-        else if (row.Kategorie === CATEGORIES.TECHNICAL)
-          contextRange = technicalContext
-        else if (row.Kategorie === CATEGORIES.LIGHTING)
-          contextRange = lightingContext
-        else if (row.Kategorie === CATEGORIES.AUDIO)
-          contextRange = einspielContext
-        else if (row.Kategorie === CATEGORIES.PROPS)
-          contextRange = requisitenContext
-        else if (row.Kategorie === CATEGORIES.MICROPHONE)
-          contextRange = mikrofonContext
-
-        // Mark context lines
-        for (
-          let i = Math.max(0, index - contextRange);
-          i <= Math.min(scriptData.length - 1, index + contextRange);
-          i++
-        ) {
-          if (i !== index) {
-            const contextState = states.get(i) || { visible: false, isContext: false }
-            contextState.isContext = true
-            states.set(i, contextState)
-          }
+        if (i !== index) {
+          const contextState = states.get(i)!
+          contextState.isContext = true
         }
       }
-
-      states.set(index, state)
     })
 
     return states
