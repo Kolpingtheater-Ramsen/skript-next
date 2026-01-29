@@ -6,7 +6,7 @@ import { useSettingsStore } from '@/stores/settings-store'
 import { useDirectorStore } from '@/stores/director-store'
 import { useUIStore } from '@/stores/ui-store'
 import { useNotesStore } from '@/stores/notes-store'
-import { CATEGORIES } from '@/lib/constants'
+import { CATEGORIES, ACTOR_CATEGORIES } from '@/lib/constants'
 import { scrollToLineWithFlash } from '@/lib/utils'
 import { socketManager } from '@/lib/socket'
 import { ScriptLine } from './script-line'
@@ -47,7 +47,7 @@ export function ScriptViewer() {
         (settings.showMikrofonCues && row.Kategorie === CATEGORIES.MICROPHONE) ||
         (settings.showActorText &&
           row.Charakter &&
-          row.Kategorie === CATEGORIES.ACTOR)
+          ACTOR_CATEGORIES.includes(row.Kategorie))
       ) {
         state.visible = true
 

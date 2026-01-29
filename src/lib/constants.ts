@@ -1,6 +1,6 @@
 // Category constants matching the Flask backend
 export const CATEGORIES = {
-  ACTOR: 'Schauspieltext',
+  ACTOR: 'Schauspieler',
   INSTRUCTION: 'Anweisung',
   SCENE_START: 'Szenenbeginn',
   TECHNICAL: 'Technik',
@@ -9,6 +9,9 @@ export const CATEGORIES = {
   PROPS: 'Requisite',
   MICROPHONE: 'Mikrofon',
 } as const
+
+// Some data sources may use alternate category names
+export const ACTOR_CATEGORIES = ['Schauspieler', 'Schauspieltext']
 
 // Storage keys for localStorage
 export const STORAGE_KEYS = {
