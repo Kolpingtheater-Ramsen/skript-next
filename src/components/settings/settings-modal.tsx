@@ -276,17 +276,12 @@ export function SettingsModal() {
       </SettingsSection>
 
       {/* Quick Links */}
-      <SettingsSection title="🔗 Schnellzugriff">
-        <div className="flex flex-col gap-2">
-          <LinkButton href="/stage">📺 Bühnen-Viewer öffnen</LinkButton>
-          <LinkButton href="/actor">🎭 Schauspieler-Viewer öffnen</LinkButton>
-          <Button
-            variant="secondary"
-            className="w-full justify-center"
-            onClick={() => window.print()}
-          >
-            🖨️ Als PDF drucken
-          </Button>
+      <SettingsSection title="QUICK LINKS">
+        <div className="grid grid-cols-2 gap-2">
+          <LinkButton href="/stats">📊 Statistiken</LinkButton>
+          <LinkButton href="/suggestor">🎲 Rollenvorschläge</LinkButton>
+          <LinkButton href="/stage" target="_blank">📺 Bühnen-Viewer</LinkButton>
+          <LinkButton href="/actor" target="_blank">🎭 Schauspieler-Viewer</LinkButton>
         </div>
       </SettingsSection>
     </Modal>
@@ -379,14 +374,18 @@ function FilterWithContext({
 function LinkButton({
   href,
   children,
+  target,
 }: {
   href: string
   children: React.ReactNode
+  target?: string
 }) {
   return (
     <a
       href={href}
-      className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg bg-gray-100 dark:bg-gray-800 text-[var(--color-text)] no-underline hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
+      target={target}
+      rel={target === '_blank' ? 'noopener noreferrer' : undefined}
+      className="inline-flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium rounded-lg border border-[var(--color-border)] bg-gray-100 dark:bg-gray-800 text-[var(--color-text)] no-underline hover:bg-gray-200 dark:hover:bg-gray-700 transition-all"
     >
       {children}
     </a>
