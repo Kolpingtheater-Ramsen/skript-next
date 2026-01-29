@@ -1,9 +1,11 @@
 'use client'
 
+import { useEffect } from 'react'
 import { useUIStore } from '@/stores/ui-store'
 import { useSettingsStore } from '@/stores/settings-store'
 import { useScriptStore } from '@/stores/script-store'
 import { useDirectorStore } from '@/stores/director-store'
+import { usePlaysStore } from '@/stores'
 import { Modal, Button, Select, Checkbox, RangeSlider, Input } from '@/components/ui'
 import { cn } from '@/lib/utils'
 import { socketManager } from '@/lib/socket'
@@ -13,6 +15,12 @@ export function SettingsModal() {
   const settings = useSettingsStore()
   const actors = useScriptStore((state) => state.actors)
   const director = useDirectorStore()
+  const { plays, loadPlays } = usePlaysStore()
+
+  // Load plays on mount
+  useEffect(() => {
+    loadPlays()
+  }, [loadPlays])
 
   // Build actor options
   const actorOptions = [
@@ -53,6 +61,17 @@ export function SettingsModal() {
     >
       {/* Production Section */}
       <SettingsSection title="📽️ Produktion">
+        {plays.length > 1 && (
+          <Select
+            label="Stück auswählen"
+            options={plays.map((p) => ({ value: p.id, label: p.name }))}
+            value={settings.playId}
+            onChange={(e) => {
+              settings.setPlayId(e.target.value)
+              window.location.reload()
+            }}
+          />
+        )}
         <Select
           label="Rolle / Charakter"
           options={actorOptions}
