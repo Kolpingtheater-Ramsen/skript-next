@@ -27,7 +27,12 @@ export function ScriptLine({
 }: ScriptLineProps) {
   const [isEditingNote, setIsEditingNote] = useState(false)
 
-  const settings = useSettingsStore()
+  // Use individual selectors for proper reactivity after hydration
+  const selectedActor = useSettingsStore((state) => state.selectedActor)
+  const useActorNames = useSettingsStore((state) => state.useActorNames)
+  const showMicro = useSettingsStore((state) => state.showMicro)
+  const enableNotes = useSettingsStore((state) => state.enableNotes)
+  const blurLines = useSettingsStore((state) => state.blurLines)
   const actors = useScriptStore((state) => state.actors)
   const { getNote, setNote, deleteNote } = useNotesStore()
 
@@ -55,16 +60,16 @@ export function ScriptLine({
 
   // Check if this actor is selected
   const isHighlighted = useMemo(() => {
-    if (!settings.selectedActor) return false
-    if (row.Charakter?.toUpperCase() === settings.selectedActor) return true
+    if (!selectedActor) return false
+    if (row.Charakter?.toUpperCase() === selectedActor) return true
     if (
       isInstruction &&
-      row['Text/Anweisung']?.toUpperCase().includes(settings.selectedActor)
+      row['Text/Anweisung']?.toUpperCase().includes(selectedActor)
     ) {
       return true
     }
     return false
-  }, [settings.selectedActor, row, isInstruction])
+  }, [selectedActor, row, isInstruction])
 
   // Don't render scene start lines
   if (isSceneStart) return null
@@ -72,7 +77,7 @@ export function ScriptLine({
   // Get display name
   const getDisplayName = () => {
     if (!row.Charakter) return null
-    if (settings.useActorNames) {
+    if (useActorNames) {
       const actor = actors.find((a) => a.role === row.Charakter)
       return actor ? `${row.Charakter} (${actor.name})` : row.Charakter
     }
@@ -82,7 +87,7 @@ export function ScriptLine({
   // Get display text with actor name substitution
   const getDisplayText = () => {
     let text = row['Text/Anweisung'] || ''
-    if (settings.useActorNames && actors.length > 0) {
+    if (useActorNames && actors.length > 0) {
       actors.forEach(({ role, name }) => {
         try {
           const pattern = new RegExp(`\\b${escapeRegExp(role)}\\b`, 'gi')
@@ -100,11 +105,11 @@ export function ScriptLine({
 
   // Bold selected actor in instructions
   const renderText = () => {
-    if (isInstruction && settings.selectedActor) {
-      const nameToBold = settings.useActorNames
-        ? actors.find((a) => a.role === settings.selectedActor)?.name ||
-          settings.selectedActor
-        : settings.selectedActor
+    if (isInstruction && selectedActor) {
+      const nameToBold = useActorNames
+        ? actors.find((a) => a.role === selectedActor)?.name ||
+          selectedActor
+        : selectedActor
       try {
         const parts = displayText.split(new RegExp(`(${escapeRegExp(nameToBold)})`, 'gi'))
         return parts.map((part, i) =>
@@ -124,7 +129,7 @@ export function ScriptLine({
   return (
     <div
       className={cn(
-        'relative p-3 px-4 my-2 rounded-lg cursor-pointer',
+        'group relative p-3 px-4 my-2 rounded-lg cursor-pointer',
         'border border-transparent transition-all',
         'bg-[var(--color-surface)]',
         'hover:bg-gray-50 dark:hover:bg-gray-800',
@@ -151,7 +156,7 @@ export function ScriptLine({
         // Context line
         isContext && 'opacity-60',
         // Blur for practice mode
-        isHighlighted && settings.blurLines && 'blur-[4px]'
+        isHighlighted && blurLines && 'blur-[4px]'
       )}
       onClick={onClick}
     >
@@ -176,7 +181,7 @@ export function ScriptLine({
       {/* Character name */}
       {displayName && (
         <div className="inline-block font-semibold text-[var(--color-primary-dark)] dark:text-[var(--color-primary)] mb-1 text-sm">
-          {settings.showMicro && row.Mikrofon
+          {showMicro && row.Mikrofon
             ? `${displayName} (${row.Mikrofon})`
             : displayName}
         </div>
@@ -186,7 +191,7 @@ export function ScriptLine({
       <div>{renderText()}</div>
 
       {/* Note */}
-      {settings.enableNotes && (
+      {enableNotes && (
         <>
           {note && !isEditingNote && (
             <div className="mt-3 p-3 bg-[rgba(251,191,36,0.15)] dark:bg-[rgba(245,158,11,0.08)] border-l-[3px] border-l-warning rounded-md text-sm">
@@ -245,10 +250,9 @@ export function ScriptLine({
                 'absolute top-2 right-2 px-2 py-1',
                 'bg-warning text-white border-none rounded-sm',
                 'text-xs cursor-pointer',
-                'opacity-0 hover:opacity-100 transition-opacity',
-                'group-hover:opacity-100',
-                '[.script-line:hover_&]:opacity-100'
+                'opacity-0 group-hover:opacity-100 transition-opacity'
               )}
+              title="Notiz hinzufügen"
             >
               ✏️
             </button>
