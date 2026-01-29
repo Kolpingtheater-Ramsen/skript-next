@@ -20,7 +20,22 @@ export function ScriptViewer() {
   const lineRefs = useRef<Map<number, HTMLDivElement>>(new Map())
 
   const { scriptData, playId } = useScriptStore()
-  const settings = useSettingsStore()
+  // Use individual selectors to ensure reactivity
+  const showActorText = useSettingsStore((state) => state.showActorText)
+  const showDirections = useSettingsStore((state) => state.showDirections)
+  const showTechnical = useSettingsStore((state) => state.showTechnical)
+  const showLighting = useSettingsStore((state) => state.showLighting)
+  const showEinspieler = useSettingsStore((state) => state.showEinspieler)
+  const showRequisiten = useSettingsStore((state) => state.showRequisiten)
+  const showMikrofonCues = useSettingsStore((state) => state.showMikrofonCues)
+  const directionsContext = useSettingsStore((state) => state.directionsContext)
+  const technicalContext = useSettingsStore((state) => state.technicalContext)
+  const lightingContext = useSettingsStore((state) => state.lightingContext)
+  const einspielContext = useSettingsStore((state) => state.einspielContext)
+  const requisitenContext = useSettingsStore((state) => state.requisitenContext)
+  const mikrofonContext = useSettingsStore((state) => state.mikrofonContext)
+  const autoScroll = useSettingsStore((state) => state.autoScroll)
+  const showSceneOverview = useSettingsStore((state) => state.showSceneOverview)
   const { isDirector, markedLineIndex, setMarkedLineIndex } = useDirectorStore()
   const { setCurrentScene } = useUIStore()
   const { loadNotes } = useNotesStore()
@@ -39,13 +54,13 @@ export function ScriptViewer() {
 
       // Check if line should be visible based on filters
       if (
-        (settings.showDirections && row.Kategorie === CATEGORIES.INSTRUCTION) ||
-        (settings.showTechnical && row.Kategorie === CATEGORIES.TECHNICAL) ||
-        (settings.showLighting && row.Kategorie === CATEGORIES.LIGHTING) ||
-        (settings.showEinspieler && row.Kategorie === CATEGORIES.AUDIO) ||
-        (settings.showRequisiten && row.Kategorie === CATEGORIES.PROPS) ||
-        (settings.showMikrofonCues && row.Kategorie === CATEGORIES.MICROPHONE) ||
-        (settings.showActorText &&
+        (showDirections && row.Kategorie === CATEGORIES.INSTRUCTION) ||
+        (showTechnical && row.Kategorie === CATEGORIES.TECHNICAL) ||
+        (showLighting && row.Kategorie === CATEGORIES.LIGHTING) ||
+        (showEinspieler && row.Kategorie === CATEGORIES.AUDIO) ||
+        (showRequisiten && row.Kategorie === CATEGORIES.PROPS) ||
+        (showMikrofonCues && row.Kategorie === CATEGORIES.MICROPHONE) ||
+        (showActorText &&
           row.Charakter &&
           ACTOR_CATEGORIES.includes(row.Kategorie))
       ) {
@@ -54,17 +69,17 @@ export function ScriptViewer() {
         // Determine context range based on category
         let contextRange = 0
         if (row.Kategorie === CATEGORIES.INSTRUCTION)
-          contextRange = settings.directionsContext
+          contextRange = directionsContext
         else if (row.Kategorie === CATEGORIES.TECHNICAL)
-          contextRange = settings.technicalContext
+          contextRange = technicalContext
         else if (row.Kategorie === CATEGORIES.LIGHTING)
-          contextRange = settings.lightingContext
+          contextRange = lightingContext
         else if (row.Kategorie === CATEGORIES.AUDIO)
-          contextRange = settings.einspielContext
+          contextRange = einspielContext
         else if (row.Kategorie === CATEGORIES.PROPS)
-          contextRange = settings.requisitenContext
+          contextRange = requisitenContext
         else if (row.Kategorie === CATEGORIES.MICROPHONE)
-          contextRange = settings.mikrofonContext
+          contextRange = mikrofonContext
 
         // Mark context lines
         for (
@@ -84,7 +99,22 @@ export function ScriptViewer() {
     })
 
     return states
-  }, [scriptData, settings])
+  }, [
+    scriptData,
+    showActorText,
+    showDirections,
+    showTechnical,
+    showLighting,
+    showEinspieler,
+    showRequisiten,
+    showMikrofonCues,
+    directionsContext,
+    technicalContext,
+    lightingContext,
+    einspielContext,
+    requisitenContext,
+    mikrofonContext,
+  ])
 
   // Handle line click
   const handleLineClick = useCallback(
@@ -99,10 +129,10 @@ export function ScriptViewer() {
 
   // Scroll to marked line with flash effect
   useEffect(() => {
-    if (markedLineIndex !== null && settings.autoScroll) {
+    if (markedLineIndex !== null && autoScroll) {
       scrollToLineWithFlash(markedLineIndex)
     }
-  }, [markedLineIndex, settings.autoScroll])
+  }, [markedLineIndex, autoScroll])
 
   // Track current scene on scroll
   useEffect(() => {
@@ -191,7 +221,7 @@ export function ScriptViewer() {
         <div key={scene}>
           <SceneHeader scene={scene} summary={summary || undefined} />
 
-          {settings.showSceneOverview && (
+          {showSceneOverview && (
             <SceneOverview sceneData={getSceneData(data)} />
           )}
 
