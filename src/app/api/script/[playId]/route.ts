@@ -9,28 +9,48 @@ export async function GET(
   try {
     const { playId } = await params
 
-    // Proxy to Flask backend
-    const response = await fetch(`${FLASK_BACKEND_URL}/api/script/${playId}`, {
+    // Fetch script data from Flask backend
+    const scriptResponse = await fetch(`${FLASK_BACKEND_URL}/api/script/${playId}`, {
       headers: {
         'Accept': 'application/json',
       },
-      // Don't cache in development
-      cache: process.env.NODE_ENV === 'production' ? 'default' : 'no-store',
+      cache: 'no-store',
     })
 
-    if (!response.ok) {
+    if (!scriptResponse.ok) {
+      const errorText = await scriptResponse.text()
       return NextResponse.json(
-        { error: `Failed to fetch script: ${response.statusText}` },
-        { status: response.status }
+        { error: `Failed to fetch script: ${scriptResponse.statusText}`, details: errorText },
+        { status: scriptResponse.status }
       )
     }
 
-    const data = await response.json()
-    return NextResponse.json(data)
+    // Flask returns array of script rows directly
+    const scriptData = await scriptResponse.json()
+
+    // Extract unique actors from script data
+    const actorsMap = new Map<string, { role: string; name: string }>()
+    if (Array.isArray(scriptData)) {
+      scriptData.forEach((row: Record<string, string>) => {
+        const character = row.Charakter
+        if (character && !actorsMap.has(character)) {
+          actorsMap.set(character, {
+            role: character,
+            name: '', // Actor names would come from a separate source if available
+          })
+        }
+      })
+    }
+
+    // Return in the format expected by the frontend
+    return NextResponse.json({
+      script: Array.isArray(scriptData) ? scriptData : [],
+      actors: Array.from(actorsMap.values()),
+    })
   } catch (error) {
     console.error('Error fetching script:', error)
     return NextResponse.json(
-      { error: 'Failed to fetch script data' },
+      { error: 'Failed to fetch script data', details: String(error) },
       { status: 500 }
     )
   }
