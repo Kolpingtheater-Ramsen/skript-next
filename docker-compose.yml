@@ -1,0 +1,22 @@
+version: "3.8"
+
+services:
+  skript-next:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        - NEXT_PUBLIC_SOCKET_URL=https://skript-api.logge.top
+        - FLASK_BACKEND_URL=http://skript:5000
+    environment:
+      - NODE_ENV=production
+      - FLASK_BACKEND_URL=http://skript:5000
+    ports:
+      - "3000:3000"
+    networks:
+      - dokploy-network
+    restart: unless-stopped
+
+networks:
+  dokploy-network:
+    external: true
