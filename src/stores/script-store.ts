@@ -2,6 +2,7 @@
 
 import { create } from 'zustand'
 import type { ScriptRow, Actor } from '@/types'
+import { generateSceneMicCues } from '@/lib/mic-cue-generator'
 
 interface ScriptState {
   playId: string
@@ -46,8 +47,9 @@ export const useScriptStore = create<ScriptState>((set, get) => ({
       }
 
       const data = await response.json()
+      const scriptWithMicCues = generateSceneMicCues(data.script || [])
       set({
-        scriptData: data.script || [],
+        scriptData: scriptWithMicCues,
         actors: data.actors || [],
         isLoading: false,
       })
