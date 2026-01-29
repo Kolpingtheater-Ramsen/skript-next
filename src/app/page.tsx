@@ -169,12 +169,12 @@ export default function HomePage() {
         return
       }
 
-      // Director mode navigation
+      // Director mode navigation (left/right arrows only)
       if (director.isDirector) {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        if (e.key === 'ArrowLeft') {
           e.preventDefault()
           handlePreviousLine()
-        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        } else if (e.key === 'ArrowRight') {
           e.preventDefault()
           handleNextLine()
         }
@@ -183,10 +183,10 @@ export default function HomePage() {
 
       // Actor mode navigation (when an actor is selected and has lines)
       if (selectedActor && highlightedLineIndices.length > 0) {
-        if (e.key === 'ArrowLeft' || e.key === 'ArrowUp') {
+        if (e.key === 'ArrowLeft') {
           e.preventDefault()
           handleActorPrevious()
-        } else if (e.key === 'ArrowRight' || e.key === 'ArrowDown') {
+        } else if (e.key === 'ArrowRight') {
           e.preventDefault()
           handleActorNext()
         }

@@ -129,6 +129,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-instruction checked:!border-instruction"
           contextValue={settings.directionsContext}
           onContextChange={(v) => settings.setContextLines('directionsContext', v)}
+          showContext={!settings.showActorText}
         />
 
         <FilterWithContext
@@ -138,6 +139,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-technical checked:!border-technical"
           contextValue={settings.technicalContext}
           onContextChange={(v) => settings.setContextLines('technicalContext', v)}
+          showContext={!settings.showActorText}
         />
 
         <FilterWithContext
@@ -147,6 +149,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-lighting checked:!border-lighting"
           contextValue={settings.lightingContext}
           onContextChange={(v) => settings.setContextLines('lightingContext', v)}
+          showContext={!settings.showActorText}
         />
 
         <FilterWithContext
@@ -156,6 +159,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-audio checked:!border-audio"
           contextValue={settings.einspielContext}
           onContextChange={(v) => settings.setContextLines('einspielContext', v)}
+          showContext={!settings.showActorText}
         />
 
         <FilterWithContext
@@ -165,6 +169,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-props checked:!border-props"
           contextValue={settings.requisitenContext}
           onContextChange={(v) => settings.setContextLines('requisitenContext', v)}
+          showContext={!settings.showActorText}
         />
 
         <Checkbox
@@ -180,6 +185,7 @@ export function SettingsModal() {
           colorClass="checked:!bg-microphone checked:!border-microphone"
           contextValue={settings.mikrofonContext}
           onContextChange={(v) => settings.setContextLines('mikrofonContext', v)}
+          showContext={!settings.showActorText}
         />
       </SettingsSection>
 
@@ -337,6 +343,7 @@ function FilterWithContext({
   colorClass,
   contextValue,
   onContextChange,
+  showContext = true,
 }: {
   checked: boolean
   onChange: () => void
@@ -344,6 +351,7 @@ function FilterWithContext({
   colorClass: string
   contextValue: number
   onContextChange: (value: number) => void
+  showContext?: boolean
 }) {
   return (
     <div>
@@ -353,7 +361,7 @@ function FilterWithContext({
         label={label}
         colorClass={colorClass}
       />
-      {checked && (
+      {checked && showContext && (
         <RangeSlider
           label="Kontextzeilen:"
           min={0}
