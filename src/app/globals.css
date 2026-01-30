@@ -275,6 +275,46 @@ body {
 }
 
 /* ============================================
+   SCRIPT LINE NOTES - Exact styles from old app
+   ============================================ */
+
+/* Note button - hidden by default, shown on hover */
+.script-line .add-note-btn {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  background-color: var(--color-warning);
+  color: white;
+  border: none;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 150ms ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+}
+
+.script-line:hover .add-note-btn {
+  opacity: 1;
+}
+
+.script-line .add-note-btn:hover {
+  background-color: #d97706;
+}
+
+/* Mobile: always show button at reduced opacity */
+@media (max-width: 768px) {
+  .script-line .add-note-btn {
+    opacity: 0.7;
+  }
+}
+
+/* ============================================
    UTILITY LAYERS
    ============================================ */
 

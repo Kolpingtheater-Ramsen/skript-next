@@ -129,7 +129,7 @@ export function ScriptLine({
   return (
     <div
       className={cn(
-        'group relative p-3 px-4 my-2 rounded-lg cursor-pointer',
+        'script-line relative p-3 px-4 my-2 rounded-lg cursor-pointer',
         'border border-transparent transition-all',
         'bg-[var(--color-surface)]',
         'hover:bg-gray-50 dark:hover:bg-gray-800',
@@ -239,22 +239,20 @@ export function ScriptLine({
             />
           )}
 
-          {/* Add note button */}
+          {/* Add note button - uses vanilla CSS hover from old app */}
           {!note && !isEditingNote && (
             <button
               onClick={(e) => {
                 e.stopPropagation()
                 setIsEditingNote(true)
               }}
-              className={cn(
-                'absolute top-2 right-2 px-2 py-1',
-                'bg-warning text-white border-none rounded-sm',
-                'text-xs cursor-pointer',
-                'opacity-0 group-hover:opacity-100 transition-opacity'
-              )}
+              className="add-note-btn"
               title="Notiz hinzufügen"
             >
-              ✏️
+              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                <path d="M12 20h9"/>
+                <path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/>
+              </svg>
             </button>
           )}
         </>
